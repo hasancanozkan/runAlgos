@@ -12,15 +12,15 @@
 import RNFetchBlob from 'react-native-fetch-blob';
 
 const math = require('mathjs');
-const eGaitData = require('./gaitApp/src/modules/import_eGaITData');
-const calibrate = require('./gaitApp/src/modules/calibrate');
-const filter = require('./gaitApp/src/modules/filter');
-const hardCoded = require('./gaitApp/src/modules/test');
-const sDTW = require('./gaitApp/src/modules/sDTW');
-const gaitEvents = require('./gaitApp/src/modules/gaitEvents');
-const spatialTrajectory3D = require('./gaitApp/src/modules/spatialTrajectory3D');
-const SensorData = require('./gaitApp/src/modules/SensorData');
-const gaitEventFeatures = require('./gaitApp/src/modules/gaitFeatures');
+const eGaitData = require('../modules/import_eGaITData');
+const calibrate = require('../modules/calibrate');
+const filter = require('../modules/filter');
+const hardCoded = require('../modules/test');
+const sDTW = require('../modules/sDTW');
+const gaitEvents = require('../modules/gaitEvents');
+const spatialTrajectory3D = require('../modules/spatialTrajectory3D');
+const SensorData = require('../modules/SensorData');
+const gaitEventFeatures = require('../modules/gaitFeatures');
 //const fs = require('fs');
 /*
  * Reading SensorData and Creating SensorData Obj
@@ -28,6 +28,7 @@ const gaitEventFeatures = require('./gaitApp/src/modules/gaitFeatures');
 //const sensorData = eGaitData.importData('../data/TestData/');
 async function sensorData (){
     const sensorData = await RNFetchBlob.fs.readFile('/storage/emulated/0/Documents/data/TestData','utf8');
+    console.log('what is this : ' + sensorData)
 };
 
 /*
