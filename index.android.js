@@ -16,10 +16,10 @@ import RNFetchBlob from 'react-native-fetch-blob';
 const demoPipeline = require('./gaitApp/src/apps/Demopipline');
 
 export default class runAlgos extends Component {
-  async getData () {
+  /*async getData () {
     const data=  await RNFetchBlob.fs.readFile('/storage/emulated/0/Documents/data/TestData/templateSh3.csv','utf8');
     console.log('this is data: ' + data);
-  }
+  }*/
   /*
     getData () {
         RNFetchBlob.fs.readFile('/storage/emulated/0/Documents/data/TestData/templateSh3.csv','utf8')

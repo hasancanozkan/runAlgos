@@ -8,7 +8,7 @@
 //const fs = require('fs');
 import RNFetchBlob from 'react-native-fetch-blob';
 const xml2js = require('react-native-xml2js');
-
+//module.exports.parseSessionXML_Egait = function (folderName: string) {
 export async function parseSessionXML_Egait(folderName: string) {
     let simpleTag;
     let headerTag;
@@ -19,9 +19,16 @@ export async function parseSessionXML_Egait(folderName: string) {
     const size = [];
     const parser = new xml2js.Parser();
     // eslint-disable-next-line no-sync
-    //const data = fs.readFileSync(folderName).toString();
-    const data = await RNFetchBlob.fs.readStream(folderName).toString();
-
+    let data;
+    try{
+        data = await RNFetchBlob.fs.readFile(folderName,'utf8');
+        //console.log('data is :');
+        //console.log(data);
+    }
+    catch (err){
+        console.log('error is :');
+        console.log(err);
+    }
     parser.parseString(data, (err, result) => {
         simpleTag = {
             PersonId: result.Session.PersonId[0],
@@ -53,7 +60,6 @@ export async function parseSessionXML_Egait(folderName: string) {
                 Duration: result.Session.TestList[i].Test[i].Duration[0],
                 MoteList: {}
             };
-
             if (newTest[i].Finished === 'true') {
                 for (let j = 0; j < 2; ++j) {
                     const mote = {
@@ -77,11 +83,9 @@ export async function parseSessionXML_Egait(folderName: string) {
                 }
             }
         }
-
     });
-
     return [simpleTag, headerTag, newTest];
-}
+};
 /*
 module.exports.parseSessionXML_Egait = function (folderName: string) {
 

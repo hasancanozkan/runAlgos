@@ -15,16 +15,15 @@ const Label = require('./Label.js');
 //TODO PROMPTING USER TO GET FOLDER NAME
 
 /** Parse Session.xml File */
-module.exports.importData = function (folderName: string) {
+//module.exports.importData = function (folderName: string) {
+export async function importData (folderName: string) { // I changed it to async but does not change
     // TODO: unused variable "headerTag"
-    const [simpleTag, headerTag , TestList] = xmlread.parseSessionXML_Egait(
+    const [simpleTag, headerTag , TestList] = await xmlread.parseSessionXML_Egait(
         folderName + 'GA414031_2MIN/session.xml'
     );
-
     if (TestList.length === 0) {
         throw new Error('Error:No Finished Test in session.xml for Subject');
     }
-
     // Read in the data and convert the headers //
     const rawData = [], dataHeader = [];
     for (let iMote = 0; iMote < (Object.keys(TestList[0].MoteList).length); iMote++) {
@@ -49,7 +48,7 @@ module.exports.importData = function (folderName: string) {
         }
     }
     // Build up the GaitData
-
+    console.log('importData 6');
     const data = new SensorData();
     SensorData.setMetadata(data, simpleTag);
     SensorData.setData(data,dataHeader, rawData);
@@ -65,7 +64,7 @@ module.exports.importData = function (folderName: string) {
     }
     return data;
 };
-
+console.log('importData 7');
 module.exports.importDataValidation = function (fileNameLeft: string, fileNameRight: string) {
     const rawData = [];
     const files = [fileNameLeft, fileNameRight];
@@ -87,10 +86,11 @@ module.exports.importDataValidation = function (fileNameLeft: string, fileNameRi
 
         rawData[iMote] = reshape.getRawData('../data/dataset/ValidationRawData/' + fileName, 6);
     }
-
+    console.log('importData 8');
     const data = new SensorData();
     SensorData.setData(data, dataHeader, rawData);
-
+    //console.log('importData 9');
     return data;
 
 };
+//console.log('importData 8');
