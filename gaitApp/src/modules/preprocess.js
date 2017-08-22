@@ -10,31 +10,27 @@ export async function getRawData(fileName: string, chunkSize: number) {
     //const x = fs.readFileSync(fileName);
     //console.log('filename');
     //console.log(fileName)
-    const x = RNFetchBlob.fs.readStream(fileName,'ascii',4096)
-        .then((stream) => {
+    const x = await RNFetchBlob.fs.readStream(fileName,'ascii')
+        /*.then((stream) => {
             let data = '';
             stream.open();
             stream.onData((chunk) => {
                 //const buffer = new ArrayBuffer(chunk.length);
-                //const Uint16View = new (chunk);
-                console.log(Uint16View);
+                const Uint16View = new Uint16Array(chunk);
+                console.log(Uint16View.length);
             });
 
             stream.onEnd(() => {
-                console.log('Unint16');
-                console.log();
+                //console.log('Unint16');
+                //console.log();
             })
-        })
-    /*let arrayBuffer = [];
+        })*/
     x.open();
     x.onData((chunk) =>{
-        const buffer = ArrayBuffer(chunk);
-        const UintView = new Uint16Array(buffer);
-        arrayBuffer.concat(UintView);
+        const Uint16View = new Uint16Array(chunk);
+        //console.log(Uint16View);
     });
     x.onEnd();
-    console.log('Preprocess : ');
-    console.log(arrayBuffer);*/
 
 
     const arr = [];
