@@ -16,11 +16,13 @@ const Label = require('./Label.js');
 
 /** Parse Session.xml File */
 //module.exports.importData = function (folderName: string) {
-export async function importData (folderName: string) { // I changed it to async but does not change
+export async function importData (folderName: string) {
     // TODO: unused variable "headerTag"
     const [simpleTag, headerTag , TestList] = await xmlread.parseSessionXML_Egait(
         folderName + 'GA414031_2MIN/session.xml'
     );
+    //console.log('simpleTag, headerTag , TestList');
+    //console.log([simpleTag, headerTag , TestList])
     if (TestList.length === 0) {
         throw new Error('Error:No Finished Test in session.xml for Subject');
     }
@@ -50,9 +52,11 @@ export async function importData (folderName: string) { // I changed it to async
     // Build up the GaitData
     console.log('importData 6');
     const data = new SensorData();
+    //console.log(SensorData);
+    //console.log(data); empty as expected
     SensorData.setMetadata(data, simpleTag);
     SensorData.setData(data,dataHeader, rawData);
-
+    console.log('importData 7');
     for (let iTest = 0; iTest < TestList.length; ++iTest) {
         const Name = TestList[0].TestName;
         for (let iSensor = 0; iSensor < rawData.length; ++iSensor) {
@@ -62,9 +66,12 @@ export async function importData (folderName: string) { // I changed it to async
             SensorData.addLabel(data,iSensor, label);
         }
     }
+    console.log()
+    console.log('importData 8');
+
     return data;
 };
-console.log('importData 7');
+//console.log('importData 9');
 module.exports.importDataValidation = function (fileNameLeft: string, fileNameRight: string) {
     const rawData = [];
     const files = [fileNameLeft, fileNameRight];
@@ -86,11 +93,11 @@ module.exports.importDataValidation = function (fileNameLeft: string, fileNameRi
 
         rawData[iMote] = reshape.getRawData('../data/dataset/ValidationRawData/' + fileName, 6);
     }
-    console.log('importData 8');
+    console.log('importData 10');
     const data = new SensorData();
     SensorData.setData(data, dataHeader, rawData);
     //console.log('importData 9');
     return data;
 
 };
-//console.log('importData 8');
+//console.log('importData 11');

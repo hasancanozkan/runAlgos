@@ -31,7 +31,7 @@ export default class runAlgos extends Component {
         });
         }*/
     try (){
-        const newRun = demoPipeline.run();
+        const newRun = demoPipeline.run; // does not accept run()
         console.log('whatever this is : ' + newRun);
     }
   render() {

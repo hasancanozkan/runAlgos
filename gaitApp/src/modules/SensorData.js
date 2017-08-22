@@ -55,6 +55,7 @@ class SensorData {
         } else {
             throw new Error('Error@SensorData:setMetadata : Metadata has to be object');
         }
+        //console.log('SensorData 1');
     }
 
     static setData (SensorDataobj: Object, dataHeader: Array<Object>, data: Array<Array<Array<number>>>) {
@@ -66,6 +67,7 @@ class SensorData {
         if (SensorDataobj.labelList.length === 0) {
             SensorDataobj.labelList = new Array(data.length);
         }
+        //console.log('SensorData 2');
     }
 
     static addLabel (SensorDataobj: Object,iSensor: number, label: Label) {
@@ -76,9 +78,11 @@ class SensorData {
                 'Error@SensorData:addLabel,first have to set the data beforestart adding labels');
         }
         SensorDataobj.labelList[iSensor] = [SensorDataobj.labelList[iSensor], label];
+        //console.log('SensorData 3');
     }
 
     static getNumDataSets (SensorDataobj: Object) {
+        //console.log('SensorData 4');
         return SensorDataobj.data.length;
     }
 
@@ -86,7 +90,7 @@ class SensorData {
         const positions = new Array(SensorDataobj.data.length);
         for (let iSets = 0; iSets < SensorDataobj.data.length; ++iSets) {
             positions[iSets] = SensorDataobj.dataHeader[iSets].SensorPosition;
-        }
+        } //console.log('SensorData 5');
         return positions;
     }
 
@@ -97,6 +101,7 @@ class SensorData {
             const iPos = SensorData.getSensorPositionIndex(SensorDataobj, position);
             return SensorDataobj.dataHeader[iPos].DataLegend;
         }
+        //console.log('SensorData 6');
     }
 
     static getSensorPositionIndex (SensorDataobj: Object, position: string) {
@@ -105,6 +110,7 @@ class SensorData {
         if (positions.includes(position)) {
             return positions.indexOf(position);
         }
+        //console.log('SensorData 6');
     }
 
     static getSensorPosition (SensorDataobj: Object, idx: number) {
@@ -113,6 +119,7 @@ class SensorData {
         if (allIdx.includes(idx)) {
             return SensorDataobj.dataHeader[idx].SensorPosition;
         }
+        //console.log('SensorData 7');
     }
 
     static getAxesIndex (SensorDataobj: Object, position: string, selectAxes: string) {
@@ -123,13 +130,14 @@ class SensorData {
                 return axes.indexOf(selectAxes);
             }
         }
+        //console.log('SensorData 8');
     }
 
     static getData (SensorDataobj: Object, position: string) {
         let iPos = 0;
         if (SensorData.getAllPositions(SensorDataobj).includes(position)) {
             iPos = SensorData.getSensorPositionIndex(SensorDataobj, position);
-        }
+        } //console.log('SensorData 9');
         return SensorDataobj.data[iPos];
     }
 
@@ -139,6 +147,7 @@ class SensorData {
         } else if (Axes === 'Gyr') {
             return SensorDataobj.data[idx].slice(3, 6);
         }
+        //console.log('SensorData 10');
     }
 }
 

@@ -55,7 +55,7 @@ module.exports.invertAxisRightOnly = function (array: Array<Array<number>>) {
 };
 
 export async function csv2Mat (fileName: string, tag: string) {
-    const str = await RNFetchBlob.fs.readStream(fileName).toString().split(/[, \r\n]+/);
+    const str = await RNFetchBlob.fs.readFile(fileName).toString().split(/[, \r\n]+/);
 
     if (tag === 'acc') {
         // eslint-disable-next-line no-sync
@@ -68,7 +68,7 @@ export async function csv2Mat (fileName: string, tag: string) {
         };
     } else {
         // eslint-disable-next-line no-sync
-        const str = fs.readFileSync(fileName).toString().split(/[, \r\n]+/);
+        const str = await RNFetchBlob.fs.readFile(fileName).toString().split(/[, \r\n]+/);
         return {
             bias: math.matrix([ str[0], str[7], str[14] ]),
             rotation: math.matrix([str[1], str[2], str[3], str[8], str[9], str[10], str[15], str[16], str[17]]).reshape([3,3]),

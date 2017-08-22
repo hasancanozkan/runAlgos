@@ -84,10 +84,14 @@ class gaitFeatures {
             strideSequences: Array<{name: string, start: number, length: number}>,
             samplingRate: number
         }>) {
-
+            console.log('gaitFeatures 1');
+            console.log(sensorDataObj.dataHeader.length);
         for (let iSensor = 0; iSensor < sensorDataObj.dataHeader.length; ++iSensor) {
-            const fs = gaitEventObj[iSensor].samplingRate;
+            console.log('gaitFeatures 2');
+            const fs = [iSensor].samplingRate;
+            //console.log('gaitFeaturesTRY 1')
             const gWorldFrame = spatial.gravityDirection;
+            //console.log('gaitFeaturesTRY 2')
             const gravityDirection1 = this.find(gWorldFrame);
             const groundDirections = [0, 1, 2].filter(x => gravityDirection1.indexOf(x) < 0);
             const gravityDirection = gravityDirection1.slice(-1).pop();
@@ -95,12 +99,13 @@ class gaitFeatures {
             const medioLatDirection = groundDirections.filter(x => antPostDirection1.indexOf(x) < 0).slice(-1).pop();
             const antPostDirection = antPostDirection1.slice(-1).pop();
             const nStrides = spatial.q[iSensor].length;
+            console.log('gaitFeatures 3');
             for (let iStride = 0; iStride < nStrides; ++iStride) {
 
                 if (typeof spatial.s[iSensor][iStride] === 'undefined') {
                     continue;
                 }
-
+                console.log('gaitFeatures 4');
                 this.timeStamp[iSensor].push(gaitEventObj[iSensor].HSLabels[iStride].start / fs);
                 const strideTime = (gaitEventObj[iSensor].HSLabels[iStride + 1].start - gaitEventObj[iSensor].HSLabels[iStride].start) / fs;
                 this.strideTime[iSensor].push(strideTime);
