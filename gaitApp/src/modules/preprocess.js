@@ -10,7 +10,6 @@ const base64ToUInt16 = function (base64D) {
     const len = binary_string.length;
     // let uInt16D = [];
     let uInt16D = new Uint16Array(len);
-
     /*
     * Parsing the 16 bit hex into Int
     * Here I know it should be little endian, hence first (i+1) + (i)*/
