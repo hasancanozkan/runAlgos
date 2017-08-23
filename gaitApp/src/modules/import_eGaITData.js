@@ -7,22 +7,19 @@
 
 const xmlread = require('./xmlread.js');
 const getHeader = require('./CompileHeader.js');
-const reshape = require('./preprocess.js');
+const preprocess = require('./preprocess.js');
 const SensorData = require('./SensorData.js');
 const Label = require('./Label.js');
 
-
-//TODO PROMPTING USER TO GET FOLDER NAME
-
-/** Parse Session.xml File */
-//module.exports.importData = function (folderName: string) {
+/*
+* Parse Session.xml File
+* */
 export async function importData (folderName: string) {
     // TODO: unused variable "headerTag"
     const [simpleTag, headerTag , TestList] = await xmlread.parseSessionXML_Egait(
         folderName + 'GA414031_2MIN/session.xml'
     );
-    //console.log('simpleTag, headerTag , TestList');
-    //console.log([simpleTag, headerTag , TestList])
+
     if (TestList.length === 0) {
         throw new Error('Error:No Finished Test in session.xml for Subject');
     }
@@ -34,29 +31,25 @@ export async function importData (folderName: string) {
         //data
         const fileName = (folderName + 'GA414031_2MIN/' + TestList[0].MoteList[iMote].File);
         switch (dataHeader[iMote].SensorType) {
-            //TODO : getRawData is based upon Chunksize, Chunksize: unint16 or int16
-            //TODO : make code small
+
             case 'SH2':
-                rawData[iMote] = reshape.getRawData(fileName, 6);
+                rawData[iMote] = await preprocess.getRawData(fileName);
                 break;
             case 'SH2R':
-                rawData[iMote] = reshape.getRawData(fileName, 6);
+                rawData[iMote] = await preprocess.getRawData(fileName);
                 break;
             case 'SH3':
-                rawData[iMote] = reshape.getRawData(fileName, 6);
+                rawData[iMote] = await preprocess.getRawData(fileName);
                 break;
             default:
                 throw new Error('Currently egait import is only supported for sh2r andsh3 sensor types');
         }
     }
     // Build up the GaitData
-    console.log('importData 6');
     const data = new SensorData();
-    //console.log(SensorData);
-    //console.log(data); empty as expected
     SensorData.setMetadata(data, simpleTag);
-    SensorData.setData(data,dataHeader, rawData);
-    console.log('importData 7');
+    SensorData.setData(data, dataHeader, rawData);
+
     for (let iTest = 0; iTest < TestList.length; ++iTest) {
         const Name = TestList[0].TestName;
         for (let iSensor = 0; iSensor < rawData.length; ++iSensor) {
@@ -66,38 +59,7 @@ export async function importData (folderName: string) {
             SensorData.addLabel(data,iSensor, label);
         }
     }
-    console.log()
-    console.log('importData 8');
 
     return data;
-};
-//console.log('importData 9');
-module.exports.importDataValidation = function (fileNameLeft: string, fileNameRight: string) {
-    const rawData = [];
-    const files = [fileNameLeft, fileNameRight];
-    const sensorPos = ['LeftFoot', 'RightFoot'];
+}
 
-    const dataHeader = new Array(2);
-
-    for (let iMote = 0; iMote < 2; iMote++) {
-        const fileName = files[iMote];
-        dataHeader[iMote] = {
-            SensorPosition: sensorPos[iMote],
-            SamplingRate: 102.4,
-            RangeAcc: 6.0,
-            RangeGyr: 500,
-            RangeAccUnits: 'g',
-            RangeGyrUnits: 'A/sec',
-            DataLegend: ['AccX', 'AccY', 'AccZ', 'GyrX', 'GyrY', 'GyrZ']
-        };
-
-        rawData[iMote] = reshape.getRawData('../data/dataset/ValidationRawData/' + fileName, 6);
-    }
-    console.log('importData 10');
-    const data = new SensorData();
-    SensorData.setData(data, dataHeader, rawData);
-    //console.log('importData 9');
-    return data;
-
-};
-//console.log('importData 11');
