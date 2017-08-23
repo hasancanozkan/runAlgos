@@ -49,35 +49,35 @@ const run = async function () {
         }
     ];
     console.timeEnd('Setting up calibration files');
-    //
-    // const calibratedData = [];
-    // const calibratedFinalData = [];
-    // const calibFilteredFinalData = [];
-    //
-    // /*
-    // * Calibrating the sensor data
-    // * Filtering the calibrated sensor data for sDTW()
-    // * */
-    // sensorData.data.forEach((v, i) => {
-    //     const data = math.clone(sensorData.data[i]);
-    //     const position = SensorData.getSensorPosition(sensorData,i);
-    //     calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
-    //     calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
-    //
-    //     if (position === 'RightFoot') {
-    //         calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
-    //     }
-    //     const temp = [];
-    //     for (let j = 0; j < calibratedFinalData[i].length; ++j) {
-    //         temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
-    //     }
-    //
-    //     calibFilteredFinalData[i] = math.clone(temp);
-    //     if (position === 'RightFoot') {
-    //         calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
-    //     }
-    // });
-    //
+
+    const calibratedData = [];
+    const calibratedFinalData = [];
+    const calibFilteredFinalData = [];
+
+    /*
+    * Calibrating the sensor data
+    * Filtering the calibrated sensor data for sDTW()
+    * */
+    sensorData.data.forEach((v, i) => {
+        const data = math.clone(sensorData.data[i]);
+        const position = SensorData.getSensorPosition(sensorData,i);
+        calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
+        calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
+
+        if (position === 'RightFoot') {
+            calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
+        }
+        const temp = [];
+        for (let j = 0; j < calibratedFinalData[i].length; ++j) {
+            temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
+        }
+
+        calibFilteredFinalData[i] = math.clone(temp);
+        if (position === 'RightFoot') {
+            calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
+        }
+    });
+
     // /*
     // * Setting the sensor data object with calibrated data
     // * */
