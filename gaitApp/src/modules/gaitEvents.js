@@ -23,6 +23,7 @@ class gaitEvents {
         labelListSteps: Array<Object>,
         foot: number) {
 
+
         /* cluster the stride labels to stride sequences
         form is [ ['Sequence 1', start, length], ['Seq 2', start, length], ...., ['Sequence 5', start, length] ]
         */
@@ -43,6 +44,7 @@ class gaitEvents {
         * */
 
         for (let i = 0; i < labelListSteps.length; ++i) {
+        // for (let i = 0; i < 2; ++i) {
             const start = labelListSteps[i][1];
             const stop = start + labelListSteps[i][2];
 
@@ -51,7 +53,6 @@ class gaitEvents {
             const accXSignal = sensorData.data[foot][0].slice(start - 1, stop);
 
             // This requires sampling rate of left or right foot
-
             this.TOLabels[i] = computeLabels.getToeOff(gyrZSignal, start, i);
             this.HSLabels[i] = computeLabels.getHeelStrike(gyrZSignal, accXSignal, windowHS, start, i);
             this.MSLabels[i] = computeLabels.getMidStance(gyrSignalSession, windowMS, overlapMS, start, stop, i);

@@ -76,8 +76,8 @@ module.exports.getSubsequences = function (distFunc: Object,costMatrix: Object,t
         warpingPath = math.transpose(warpingPath);
         warpingPath._data[1].slice(warpingPath._data[1].findIndex(x => x === anew),
             warpingPath._size[1])
-        .map((value, index) => warpingPath._data[1][warpingPath._data[1].findIndex(
-            x => x === anew) + index] = anew);
+            .map((value, index) => warpingPath._data[1][warpingPath._data[1].findIndex(
+                x => x === anew) + index] = anew);
         warpingPath = math.transpose(warpingPath);
         // compute path length
         const lengthPath = bnew - anew;
@@ -89,13 +89,13 @@ module.exports.getSubsequences = function (distFunc: Object,costMatrix: Object,t
         //set distFunc = inf within suitable neighbourhood
         if ((bnew + ignoreSize) > math.max(costMatrix._size)) {
             temp._data.slice(anew, temp._size)
-            .map((value, index) => temp._data[anew + index] = Number.MAX_VALUE);
+                .map((value, index) => temp._data[anew + index] = Number.MAX_VALUE);
         } else {
             temp._data.slice(anew + 1, bnew + ignoreSize)
-            .map((value, index) => temp._data[anew + 1 + index] = Number.MAX_VALUE);
+                .map((value, index) => temp._data[anew + 1 + index] = Number.MAX_VALUE);
         }
         bnew = temp._data.indexOf(math.min(temp._data));
-    //if the value is less then threshold
+        //if the value is less then threshold
     } while (temp._data[bnew] < threshold);
     return [path, pathLength];
 };

@@ -8,8 +8,8 @@ const base64ToUInt16 = function (base64D) {
     // Decoding the base64 data
     const binary_string =  window.atob(base64D);
     const len = binary_string.length;
-    // let uInt16D = [];
-    let uInt16D = new Uint16Array(len);
+    let uInt16D = [];
+    // let uInt16D = new Uint16Array();
     /*
     * Parsing the 16 bit hex into Int
     * Here I know it should be little endian, hence first (i+1) + (i)*/
