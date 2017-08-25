@@ -32,7 +32,7 @@ export const run = async function () {
     // console.time('Setting up sensor data');
     sensorData = await eGaitData.importData('/storage/emulated/0/Documents/data/TestData/');
     // console.timeEnd('Setting up sensor data');
-
+    
     /*
     * Creating Calibration File
     * */
@@ -95,26 +95,26 @@ export const run = async function () {
     * Evaluating the Strides with Subsequent Dynamic Time Warping algorithm
     * */
     // console.time('sDTW Algorithm');
-    sensorData.data.forEach((v,i) => {
+    //sensorData.data.forEach((v,i) => {
+        let i = 0;
         normalizedSensorData[i] = math.matrix([math.divide(calibFilteredFinalData[i][4], 500), math.divide(calibFilteredFinalData[i][5], 500)]);
         const temp = new sDTW();
         temp.result(math.transpose(normalizedSensorData[i]), template,35);
         sDTWObj.push(temp);
-    });
-    // console.timeEnd('sDTW Algorithm');
-    // console.log(sDTWObj[0].distMatrix);
-    //console.log(sDTWObj[0].labelList.length);
-    //console.log(sDTWObj[1].labelList.length);
+    //});
+    
+   
+    
     /*
     * Evaluating the Gait Events from the strides
     * */
     // console.time('Gait Events Algorithm');
-    sensorData.data.forEach((v,i) => {
-        const temp = new gaitEvents();
-        const labelListStrides = sDTWObj[i].labelList;
-        temp.getGaitEventResults(sensorData, labelListStrides, i);
-        gaitEventObj.push(temp);
-    });
+    //sensorData.data.forEach((v,i) => {
+    //    const temp = new gaitEvents();
+    //    const labelListStrides = sDTWObj[i].labelList;
+    //    temp.getGaitEventResults(sensorData, labelListStrides, i);
+    //    gaitEventObj.push(temp);
+    //});
     // console.timeEnd('Gait Events Algorithm');
 
     // /*

@@ -35,5 +35,6 @@ export async function getRawData(fileName: string) {
         rawData[4].push(uInt16Data[i+4]);
         rawData[5].push(uInt16Data[i+5]);
     }
+    console.log(rawData[4]);
     return rawData;
 }
