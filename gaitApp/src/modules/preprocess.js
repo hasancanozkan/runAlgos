@@ -3,13 +3,16 @@
 
 //const fs = require('fs');
 import RNFetchBlob from 'react-native-fetch-blob';
+var base64 = require('base-64');
 
 const base64ToUInt16 = function (base64D) {
     // Decoding the base64 data
-    const binary_string =  window.atob(base64D);
+    //const binary_string =  window.atob(base64D);
+    const binary_string = base64.decode(base64D); // both atob and decode gives same result but atob works on browser and only debug mode, therefore I prefer this
     const len = binary_string.length;
-    let uInt16D = [];
-    // let uInt16D = new Uint16Array();
+
+    //let uInt16D = [];
+     let uInt16D = new Uint16Array(len);
     /*
     * Parsing the 16 bit hex into Int
     * Here I know it should be little endian, hence first (i+1) + (i)*/
