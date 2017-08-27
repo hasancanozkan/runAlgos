@@ -22,32 +22,24 @@ const spatialTrajectory3D = require('../modules/spatialTrajectory3D');
 const SensorData = require('../modules/SensorData');
 const gaitEventFeatures = require('../modules/gaitFeatures');
 let sensorData;
+const lftData = require('../modules/lftData.json');
+const rgtData = require('../modules/rgtData.json');
 
 // to run the code, created a run function
 export const run = async function () {
-    //console.time('Overall Pipeline time = ');
+    console.time('Overall Pipeline time = ');
     /*
     * Evaluating the gait features from the spatial information of all strides
     * */
-    // console.time('Setting up sensor data');
+     console.time('Setting up sensor data');
     sensorData = await eGaitData.importData('/storage/emulated/0/Documents/data/TestData/');
-    // console.timeEnd('Setting up sensor data');
-    console.log(sensorData.data[0][4][14007]);
+    sensorData.data = [[lftData.Ax,lftData.Ay,lftData.Az,lftData.Gx,lftData.Gy,lftData.Gz],
+                       [rgtData.Ax,rgtData.Ay,rgtData.Az,rgtData.Gx,rgtData.Gy,rgtData.Gz]];
 
-    // to show which and how much values are under 500 which is wrong
-
-    for (let i=0;i<6;i++) {
-        let k = sensorData.data[0][i];
-        for (let t=0; t<14007; t++){
-            if (k[t]<500){
-                console.log(k[t]);
-            }
-        }
-    }
     /*
     * Creating Calibration File
     * */
-    // console.time('Setting up calibration files');
+    console.time('Setting up calibration files');
     const calibrationFiles = [
         {
             foot: 'LeftFoot',
@@ -88,14 +80,12 @@ export const run = async function () {
             calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
         }
     });
-    // console.timeEnd('Setting up calibration files');
+    console.timeEnd('Setting up calibration files');
 
     /*
     * Setting the sensor data object with calibrated data
     * */
     SensorData.setData(sensorData, sensorData.dataHeader, calibratedFinalData);
-
-
     const normalizedSensorData = [];
     const sDTWObj = [];
     const tem = math.transpose(hardCoded.template());
@@ -105,46 +95,41 @@ export const run = async function () {
     /*
     * Evaluating the Strides with Subsequent Dynamic Time Warping algorithm
     * */
-    // console.time('sDTW Algorithm');
-    //sensorData.data.forEach((v,i) => {
-        let i = 0;
+    console.time('sDTW Algorithm');
+    sensorData.data.forEach((v,i) => {
         normalizedSensorData[i] = math.matrix([math.divide(calibFilteredFinalData[i][4], 500), math.divide(calibFilteredFinalData[i][5], 500)]);
         const temp = new sDTW();
         temp.result(math.transpose(normalizedSensorData[i]), template,35);
         sDTWObj.push(temp);
-    //});
-    
-   
-    
+    });
+    console.timeEnd('sDTW Algorithm');
     /*
     * Evaluating the Gait Events from the strides
     * */
-    // console.time('Gait Events Algorithm');
-    //sensorData.data.forEach((v,i) => {
-    //    const temp = new gaitEvents();
-    //    const labelListStrides = sDTWObj[i].labelList;
-    //    temp.getGaitEventResults(sensorData, labelListStrides, i);
-    //    gaitEventObj.push(temp);
-    //});
-    // console.timeEnd('Gait Events Algorithm');
+    console.time('Gait Events Algorithm');
+    sensorData.data.forEach((v,i) => {
+        const temp = new gaitEvents();
+        const labelListStrides = sDTWObj[i].labelList;
+        temp.getGaitEventResults(sensorData, labelListStrides, i);
+        gaitEventObj.push(temp);
+    });
+     console.timeEnd('Gait Events Algorithm');
 
     // /*
     // * Computing the 3D trajectory
     // * */
-    // console.time('3D trajectory Algorithm');
-    // const spatialObj = new spatialTrajectory3D({});
-    // spatialObj.maxIntTime(sensorData, sDTWObj);
-    // spatialObj.computeTrajectory(sensorData, gaitEventObj);
-    // console.timeEnd('3D trajectory Algorithm');
-    //
-    // console.time('Gait Events Algorithm');
-    // const gaitFeatures = new gaitEventFeatures();
-    // gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
-    // console.timeEnd('Gait Events Algorithm');
-    //console.timeEnd('Overall Pipeline time = ');
-
-    return 1;
-
+    console.time('3D trajectory Algorithm');
+    const spatialObj = new spatialTrajectory3D({});
+    spatialObj.maxIntTime(sensorData, sDTWObj);
+    spatialObj.computeTrajectory(sensorData, gaitEventObj);
+    console.timeEnd('3D trajectory Algorithm');
+    
+    console.time('Gait Events Algorithm');
+    const gaitFeatures = new gaitEventFeatures();
+    gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
+    console.timeEnd('Gait Events Algorithm');
+    console.timeEnd('Overall Pipeline time = ');
+    console.log(gaitFeatures);
 };
 
 run();
