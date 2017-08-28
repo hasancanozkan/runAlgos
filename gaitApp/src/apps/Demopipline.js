@@ -139,7 +139,12 @@ export async function run ()  {
 
     console.timeEnd('Overall Pipeline time = ');
 
+<<<<<<< HEAD
     return gaitFeatures.strideLength;
 }
 
 // run();
+=======
+    return gaitFeatures.heelStrikeAngle;
+};
+>>>>>>> f16eba2b75dda6eb0a77accbf925ebf4af63fb9a
