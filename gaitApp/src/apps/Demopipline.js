@@ -21,11 +21,12 @@ const gaitEvents = require('../modules/gaitEvents');
 const spatialTrajectory3D = require('../modules/spatialTrajectory3D');
 const SensorData = require('../modules/SensorData');
 const gaitEventFeatures = require('../modules/gaitFeatures');
-let sensorData;
+
 
 // to run the code, created a run function
 export const run = async function () {
     console.time('Overall Pipeline time = ');
+    let sensorData;
     /*
     * Evaluating the gait features from the spatial information of all strides
     * */
@@ -138,10 +139,7 @@ export const run = async function () {
 
     console.timeEnd('Overall Pipeline time = ');
 
-    console.log(gaitFeatures);
-
-    return 1;
-
+    return gaitFeatures.heelStrikeAngle;
 };
 
 run();
