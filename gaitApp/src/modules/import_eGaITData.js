@@ -31,15 +31,15 @@ export async function importData (folderName: string) {
         const fileName = (folderName + 'GA414031_2MIN/' + TestList[0].MoteList[iMote].File);
         switch (dataHeader[iMote].SensorType) {
 
-            /*case 'SH2':
+            case 'SH2':
                 rawData[iMote] = await preprocess.getRawData(fileName);
-                break;*/
+                break;
             case 'SH2R':
                 rawData[iMote] = await preprocess.getRawData(fileName);
                 break;
-            /*case 'SH3':
+            case 'SH3':
                 rawData[iMote] = await preprocess.getRawData(fileName);
-                break;*/
+                break;
             default:
                 throw new Error('Currently egait import is only supported for sh2r andsh3 sensor types');
         }

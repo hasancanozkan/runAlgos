@@ -33,73 +33,72 @@ export const run = async function () {
     sensorData = await eGaitData.importData('/storage/emulated/0/Documents/data/TestData/');
     console.timeEnd('Setting up sensor data');
 
-    await RNFetchBlob.fs.writeFile('/storage/emulated/0/Documents/Outputs/rnRawDataLeftFoot5.csv',
-        sensorData.data[0][5].toString(), 'utf-8');
-    console.log('Wrote the file');
-    // console.timeEnd('Setting up sensor data');
-    console.log(sensorData.data[0][4][14007]);
+    // await RNFetchBlob.fs.writeFile('/storage/emulated/0/Documents/Outputs/rnRawDataLeftFoot5.csv',
+    //     sensorData.data[0][5].toString(), 'utf-8');
+    // console.log('Wrote the file');
+    console.timeEnd('Setting up sensor data');
 
     // to show which and how much values are under 500 which is wrong
-
-    for (let i=0;i<6;i++) {
-        let k = sensorData.data[0][i];
-        for (let t=0; t<14007; t++){
-            if (k[t]<500){
-                console.log(k[t]);
-            }
-        }
-    }
-
+    // let counter = 0;
+    // for (let i=0;i<1;i++) {
+    //     let k = sensorData.data[0][0];
+    //     for (let t=0; t<14007; t++){
+    //         if (k[t]<500){
+    //             counter++;
+    //         }
+    //     }
+    // }
+    // console.log(counter + ' wrong values i.e < 500');
     /*
     * Creating Calibration File
     * */
-    console.time('Setting up calibration');
-    const calibrationFiles = [
-        {
-            foot: 'LeftFoot',
-            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv','acc'),
-            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv','gyro')
-        },
-        {
-            foot: 'RightFoot',
-            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv','acc'),
-            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv','gyro')
-        }
-    ];
-
-    const calibratedData = [];
-    const calibratedFinalData = [];
-    const calibFilteredFinalData = [];
+    // console.time('Setting up calibration');
+    // const calibrationFiles = [
+    //     {
+    //         foot: 'LeftFoot',
+    //         Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv','acc'),
+    //         Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv','gyro')
+    //     },
+    //     {
+    //         foot: 'RightFoot',
+    //         Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv','acc'),
+    //         Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv','gyro')
+    //     }
+    // ];
+    //
+    // const calibratedData = [];
+    // const calibratedFinalData = [];
+    // const calibFilteredFinalData = [];
 
     /*
     * Calibrating the sensor data
     * Filtering the calibrated sensor data for sDTW()
     * */
-    sensorData.data.forEach((v, i) => {
-        const data = math.clone(sensorData.data[i]);
-        const position = SensorData.getSensorPosition(sensorData,i);
-        calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
-        calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
-
-        if (position === 'RightFoot') {
-            calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
-        }
-        const temp = [];
-        for (let j = 0; j < calibratedFinalData[i].length; ++j) {
-            temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
-        }
-
-        calibFilteredFinalData[i] = math.clone(temp);
-        if (position === 'RightFoot') {
-            calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
-        }
-    });
-    console.timeEnd('Setting up calibration');
+    // sensorData.data.forEach((v, i) => {
+    //     const data = math.clone(sensorData.data[i]);
+    //     const position = SensorData.getSensorPosition(sensorData,i);
+    //     calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
+    //     calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
+    //
+    //     if (position === 'RightFoot') {
+    //         calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
+    //     }
+    //     const temp = [];
+    //     for (let j = 0; j < calibratedFinalData[i].length; ++j) {
+    //         temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
+    //     }
+    //
+    //     calibFilteredFinalData[i] = math.clone(temp);
+    //     if (position === 'RightFoot') {
+    //         calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
+    //     }
+    // });
+    // console.timeEnd('Setting up calibration');
 
     /*
     * Setting the sensor data object with calibrated data
     * */
-    SensorData.setData(sensorData, sensorData.dataHeader, calibratedFinalData);
+    // SensorData.setData(sensorData, sensorData.dataHeader, calibratedFinalData);
 
 
     // const normalizedSensorData = [];
