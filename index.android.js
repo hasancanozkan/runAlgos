@@ -17,7 +17,7 @@ const demoPipeline = require('./gaitApp/src/apps/Demopipline');
 export default class runAlgos extends Component {
 
     _try = async () => {
-        const newRun = await demoPipeline.run(); // does not accept run()
+        const newRun = await demoPipeline.run();
         console.log('this is: ');
         console.log(newRun);
     };
@@ -31,7 +31,7 @@ export default class runAlgos extends Component {
                 <Button
                     color='yellowgreen'
                     title="Run Demopipeline"
-                    onPress={() => this._try()}
+                    onPress={async () => this._try()}
                 />
 
             </View>

@@ -141,5 +141,3 @@ export const run = async function () {
 
     return gaitFeatures.heelStrikeAngle;
 };
-
-run();
