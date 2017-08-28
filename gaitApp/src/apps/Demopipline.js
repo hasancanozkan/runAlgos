@@ -5,7 +5,7 @@
  * Created by jalil on 6/4/2017.
  * Javascript implementation of the Demopipline in Matlab.
  * 1) Reads files
- * 2) Calulates Dynamic Time Warping
+ * 2) Calculates Dynamic Time Warping
  * 3) Gait Events
  * 4) Spatial Parameters.
  */
@@ -21,12 +21,13 @@ const gaitEvents = require('../modules/gaitEvents');
 const spatialTrajectory3D = require('../modules/spatialTrajectory3D');
 const SensorData = require('../modules/SensorData');
 const gaitEventFeatures = require('../modules/gaitFeatures');
-let sensorData;
 const lftData = require('../modules/lftData.json');
 const rgtData = require('../modules/rgtData.json');
 
 // to run the code, created a run function
 export const run = async function () {
+    let sensorData;
+
     console.time('Overall Pipeline time = ');
     /*
     * Evaluating the gait features from the spatial information of all strides
@@ -115,19 +116,23 @@ export const run = async function () {
     });
      console.timeEnd('Gait Events Algorithm');
 
-    // /*
-    // * Computing the 3D trajectory
-    // * */
+    /*
+    * Computing the 3D trajectory
+    * */
     console.time('3D trajectory Algorithm');
     const spatialObj = new spatialTrajectory3D({});
     spatialObj.maxIntTime(sensorData, sDTWObj);
     spatialObj.computeTrajectory(sensorData, gaitEventObj);
     console.timeEnd('3D trajectory Algorithm');
-    
+
+    /*
+    * Computing Gait Features
+    * */
     console.time('Gait Events Algorithm');
     const gaitFeatures = new gaitEventFeatures();
     gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
     console.timeEnd('Gait Events Algorithm');
+
     console.timeEnd('Overall Pipeline time = ');
     //console.log(gaitFeatures.heelStrikeAngle);
 

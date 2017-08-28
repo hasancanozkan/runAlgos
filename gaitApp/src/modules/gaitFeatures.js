@@ -7,7 +7,7 @@
  */
 
 const math = require('mathjs');
-const quat = require('./quaternion.js');
+const quaternion = require('./quaternion.js');
 const SensorData = require('./SensorData.js');
 
 class gaitFeatures {
@@ -66,9 +66,9 @@ class gaitFeatures {
             orientationMethodinactiveMask: string;
             groundVel: number;
             q: Array<Array<Array<Array<number>>>>;
-            a: Array<Array<Array<Array<number>>>>;
-            v: Array<Array<Array<Array<number>>>>;
-            s: Array<Array<Array<Array<number>>>>;
+            a: Array<Array<Array<number>>>;
+            v: Array<Array<Array<number>>>;
+            s: Array<Array<Array<number>>>;
             currentSensor: number;
             accChannels: Array<Array<number>>;
             segmentStart: Array<Array<number>>;
@@ -84,14 +84,10 @@ class gaitFeatures {
             strideSequences: Array<{name: string, start: number, length: number}>,
             samplingRate: number
         }>) {
-            console.log('gaitFeatures 1');
-            console.log(sensorDataObj.dataHeader.length);
+
         for (let iSensor = 0; iSensor < sensorDataObj.dataHeader.length; ++iSensor) {
-            console.log('gaitFeatures 2');
-            const fs = [iSensor].samplingRate;
-            //console.log('gaitFeaturesTRY 1')
+            const fs = gaitEventObj[iSensor].samplingRate;
             const gWorldFrame = spatial.gravityDirection;
-            //console.log('gaitFeaturesTRY 2')
             const gravityDirection1 = this.find(gWorldFrame);
             const groundDirections = [0, 1, 2].filter(x => gravityDirection1.indexOf(x) < 0);
             const gravityDirection = gravityDirection1.slice(-1).pop();
@@ -99,13 +95,13 @@ class gaitFeatures {
             const medioLatDirection = groundDirections.filter(x => antPostDirection1.indexOf(x) < 0).slice(-1).pop();
             const antPostDirection = antPostDirection1.slice(-1).pop();
             const nStrides = spatial.q[iSensor].length;
-            console.log('gaitFeatures 3');
+
             for (let iStride = 0; iStride < nStrides; ++iStride) {
 
                 if (typeof spatial.s[iSensor][iStride] === 'undefined') {
                     continue;
                 }
-                console.log('gaitFeatures 4');
+
                 this.timeStamp[iSensor].push(gaitEventObj[iSensor].HSLabels[iStride].start / fs);
                 const strideTime = (gaitEventObj[iSensor].HSLabels[iStride + 1].start - gaitEventObj[iSensor].HSLabels[iStride].start) / fs;
                 this.strideTime[iSensor].push(strideTime);
@@ -154,8 +150,8 @@ class gaitFeatures {
 
                 const angleCourse = [];
                 spatial.q[iSensor][iStride].forEach((val, ind) => {
-                    const qMStoT = quat.product(val, quat.inverse(qMS));
-                    angleCourse[ind] = quat.quatToEuler(qMStoT);
+                    const qMStoT = quaternion.product(val, quaternion.inverse(qMS));
+                    angleCourse[ind] = quaternion.quaternionToEuler(qMStoT);
                 });
 
                 // Calculating the TO Angle
@@ -189,9 +185,9 @@ class gaitFeatures {
                 // Not yet implemented
 
                 // Calculating ground Turning angle -- Almost same as matlab
-                const qTurn = quat.product(spatial.q[iSensor][iStride][0],
-                    quat.inverse(spatial.q[iSensor][iStride][spatial.q[iSensor][iStride].length - 1]));
-                const turningAngleEuler = quat.quatToEuler(qTurn);
+                const qTurn = quaternion.product(spatial.q[iSensor][iStride][0],
+                    quaternion.inverse(spatial.q[iSensor][iStride][spatial.q[iSensor][iStride].length - 1]));
+                const turningAngleEuler = quaternion.quaternionToEuler(qTurn);
                 this.groundTurningAngle[iSensor].push(this.radToDegree(turningAngleEuler[gravityDirection]));
 
                 // Calculating TO ant-post acc. (pushOff) -- spatial.a values significantly not same as matlab hence wrong results
