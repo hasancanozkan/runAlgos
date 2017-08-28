@@ -24,7 +24,7 @@ const gaitEventFeatures = require('../modules/gaitFeatures');
 
 
 // to run the code, created a run function
-export const run = async function () {
+export async function run ()  {
     console.time('Overall Pipeline time = ');
     let sensorData;
     /*
@@ -139,7 +139,7 @@ export const run = async function () {
 
     console.timeEnd('Overall Pipeline time = ');
 
-    return gaitFeatures.heelStrikeAngle;
-};
+    return gaitFeatures.strideLength;
+}
 
-run();
+// run();
