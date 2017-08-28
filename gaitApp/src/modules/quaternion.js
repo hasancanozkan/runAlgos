@@ -64,7 +64,7 @@ module.exports.inverse = function (q: Array<number>) {
     //return qInv;
 };
 
-module.exports.quatToEuler = function (q: Array<number>) {
+module.exports.quaternionToEuler = function (q: Array<number>) {
     //  Rotation matrix saved in the form of row matrix
     const R = [[], [], []];
     R[0][0] = (2 * (q[0] * q[0])) - 1 + (2 * (q[1] * q[1]));

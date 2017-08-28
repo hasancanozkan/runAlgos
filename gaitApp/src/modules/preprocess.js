@@ -3,7 +3,7 @@
 
 //const fs = require('fs');
 import RNFetchBlob from 'react-native-fetch-blob';
-var base64 = require('base-64');
+const base64 = require('base-64');
 
 const base64ToUInt16 = function (base64D) {
     // Decoding the base64 data
