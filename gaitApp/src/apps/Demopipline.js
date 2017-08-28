@@ -25,7 +25,7 @@ let sensorData;
 
 // to run the code, created a run function
 export const run = async function () {
-    console.time('Overall Pipeline time = ');
+    //console.time('Overall Pipeline time = ');
     /*
     * Evaluating the gait features from the spatial information of all strides
     * */
@@ -36,6 +36,20 @@ export const run = async function () {
     await RNFetchBlob.fs.writeFile('/storage/emulated/0/Documents/Outputs/rnRawDataLeftFoot5.csv',
         sensorData.data[0][5].toString(), 'utf-8');
     console.log('Wrote the file');
+    // console.timeEnd('Setting up sensor data');
+    console.log(sensorData.data[0][4][14007]);
+
+    // to show which and how much values are under 500 which is wrong
+
+    for (let i=0;i<6;i++) {
+        let k = sensorData.data[0][i];
+        for (let t=0; t<14007; t++){
+            if (k[t]<500){
+                console.log(k[t]);
+            }
+        }
+    }
+
     /*
     * Creating Calibration File
     * */
