@@ -129,7 +129,9 @@ export const run = async function () {
     gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
     console.timeEnd('Gait Events Algorithm');
     console.timeEnd('Overall Pipeline time = ');
-    console.log(gaitFeatures);
+    //console.log(gaitFeatures.heelStrikeAngle);
+
+    return gaitFeatures.heelStrikeAngle;
 };
 
 run();

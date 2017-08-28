@@ -16,9 +16,10 @@ import RNFetchBlob from 'react-native-fetch-blob';
 const demoPipeline = require('./gaitApp/src/apps/Demopipline');
 
 export default class runAlgos extends Component {
-    try (){
-        const newRun = demoPipeline.run; // does not accept run()
-        console.log('whatever this is : ' + newRun);
+     async try (){
+        const newRun = await demoPipeline.run();
+        console.log('this is:  ');
+        console.log(newRun);
     }
 
     render() {
