@@ -7,30 +7,43 @@ const base64 = require('base-64');
 
 const base64ToUInt16 = function (base64D) {
     // Decoding the base64 data
-    const binary_string = base64.decode(base64D); // both atob and decode gives same result but atob works on browser and only debug mode, therefore I prefer this
+    // both atob and decode gives same result but atob works on browser and only debug mode, therefore I prefer this
+    const binary_string = base64.decode(base64D);
     const len = binary_string.length;
 
-    // let uInt16D = [];
+    let uInt16D = [];
     let hexValue = [];
-     let uInt16D = new Uint16Array(len);
+    // let uInt16D = new Uint16Array(len);
+
     /*
     * Parsing the 16 bit hex into Int
-    * Here I know it should be little endian, hence first (i+1) + (i)*/
+    * Here I know it should be little endian, hence first (i+1) + (i)
+    * */
     for (let i = 0, j = 0; i < len; i+=2, ++j) {
 
         /*
         * The problem is here, for ex
         * if byte1 = '71' and byte2 = '0'
         * in string concat only '71' is registered, but it should be '710'
+        * Resolved this problem using the if condition below
         * */
         const byte1 = binary_string.charCodeAt(i+1).toString(16);
         const byte2 = binary_string.charCodeAt(i).toString(16);
         hexValue[j] = byte1.concat(byte2);
 
+        /*
+        ********** Debugging **********
+        * Trying to pad a 0 if only one byte is registered in hexValue
+        * However, still some hexadecimal values are incorrect
+        * Ex: '0' + '1c' = 28 but I cross checked with Matlab and it should be '6' + 'D6' = 1750
+        * ^ this case still remains even if the following condition is not set*/
+        if (hexValue[j].length === 2) {
+            hexValue[j] = hexValue[j].padEnd(3, 0);
+        }
+
         uInt16D[j] = parseInt(hexValue[j], 16);
     }
-    console.log(hexValue);
-    console.log(uInt16D);
+
     return uInt16D;
 };
 
@@ -40,13 +53,17 @@ export async function getRawData(fileName: string) {
     const uInt16Data = base64ToUInt16(base64Data);
 
     let pos = [];
-    // An array to find the postion where the values r less than 500 for debugging
+
+    /*
+    * ********** Debugging **********
+    * An array to find the position where the values are less than 500 (ideally no value should be less than 500)
+    * Found 38 for left foot data and 44 for right foot data
+    * */
     for (let i = 0; i < uInt16Data.length; ++i) {
         if (uInt16Data[i] < 500) {
             pos.push(i);
         }
     }
-    console.log(pos);
 
     let rawData = [[], [], [], [], [], []];
 

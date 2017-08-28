@@ -25,7 +25,7 @@ let sensorData;
 
 // to run the code, created a run function
 export const run = async function () {
-    //console.time('Overall Pipeline time = ');
+    console.time('Overall Pipeline time = ');
     /*
     * Evaluating the gait features from the spatial information of all strides
     * */
@@ -36,103 +36,76 @@ export const run = async function () {
     // await RNFetchBlob.fs.writeFile('/storage/emulated/0/Documents/Outputs/rnRawDataLeftFoot5.csv',
     //     sensorData.data[0][5].toString(), 'utf-8');
     // console.log('Wrote the file');
-    console.timeEnd('Setting up sensor data');
 
-    // to show which and how much values are under 500 which is wrong
-    // let counter = 0;
-    // for (let i=0;i<1;i++) {
-    //     let k = sensorData.data[0][0];
-    //     for (let t=0; t<14007; t++){
-    //         if (k[t]<500){
-    //             counter++;
-    //         }
-    //     }
-    // }
-    // console.log(counter + ' wrong values i.e < 500');
     /*
     * Creating Calibration File
     * */
-    // console.time('Setting up calibration');
-    // const calibrationFiles = [
-    //     {
-    //         foot: 'LeftFoot',
-    //         Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv','acc'),
-    //         Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv','gyro')
-    //     },
-    //     {
-    //         foot: 'RightFoot',
-    //         Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv','acc'),
-    //         Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv','gyro')
-    //     }
-    // ];
-    //
-    // const calibratedData = [];
-    // const calibratedFinalData = [];
-    // const calibFilteredFinalData = [];
+    console.time('Setting up calibration');
+    const calibrationFiles = [
+        {
+            foot: 'LeftFoot',
+            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv','acc'),
+            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv','gyro')
+        },
+        {
+            foot: 'RightFoot',
+            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv','acc'),
+            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv','gyro')
+        }
+    ];
+
+    const calibratedData = [];
+    const calibratedFinalData = [];
+    const calibFilteredFinalData = [];
 
     /*
     * Calibrating the sensor data
     * Filtering the calibrated sensor data for sDTW()
     * */
-    // sensorData.data.forEach((v, i) => {
-    //     const data = math.clone(sensorData.data[i]);
-    //     const position = SensorData.getSensorPosition(sensorData,i);
-    //     calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
-    //     calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
-    //
-    //     if (position === 'RightFoot') {
-    //         calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
-    //     }
-    //     const temp = [];
-    //     for (let j = 0; j < calibratedFinalData[i].length; ++j) {
-    //         temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
-    //     }
-    //
-    //     calibFilteredFinalData[i] = math.clone(temp);
-    //     if (position === 'RightFoot') {
-    //         calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
-    //     }
-    // });
-    // console.timeEnd('Setting up calibration');
+    sensorData.data.forEach((v, i) => {
+        const data = math.clone(sensorData.data[i]);
+        const position = SensorData.getSensorPosition(sensorData,i);
+        calibratedData[i] = calibrate.calibrateRawData(data, calibrationFiles[i].Acc, calibrationFiles[i].Gyr);
+        calibratedFinalData[i] = calibrate.changeAxis(calibratedData[i]);
+
+        if (position === 'RightFoot') {
+            calibratedFinalData[i] = calibrate.invertAxis(calibratedFinalData[i]);
+        }
+        const temp = [];
+        for (let j = 0; j < calibratedFinalData[i].length; ++j) {
+            temp[j] = filter.getFilteredData(5, calibratedFinalData[i][j]);
+        }
+
+        calibFilteredFinalData[i] = math.clone(temp);
+        if (position === 'RightFoot') {
+            calibFilteredFinalData[i] = calibrate.invertAxisRightOnly(calibFilteredFinalData[i]);
+        }
+    });
+    console.timeEnd('Setting up calibration');
 
     /*
     * Setting the sensor data object with calibrated data
     * */
-    // SensorData.setData(sensorData, sensorData.dataHeader, calibratedFinalData);
+    SensorData.setData(sensorData, sensorData.dataHeader, calibratedFinalData);
 
 
-    // const normalizedSensorData = [];
-    // const sDTWObj = [];
-    // const tem = math.transpose(hardCoded.template());
-    // const template = math.transpose(math.matrix([tem._data[4],tem._data[5]]));
-    // const gaitEventObj = [];
+    const normalizedSensorData = [];
+    const sDTWObj = [];
+    const tem = math.transpose(hardCoded.template());
+    const template = math.transpose(math.matrix([tem._data[4],tem._data[5]]));
+    const gaitEventObj = [];
 
     /*
     * Evaluating the Strides with Subsequent Dynamic Time Warping algorithm
     * */
-    // console.time('sDTW Algorithm');
-    // sensorData.data.forEach((v,i) => {
-    //     normalizedSensorData[i] = math.matrix([math.divide(calibFilteredFinalData[i][4], 500), math.divide(calibFilteredFinalData[i][5], 500)]);
-    //     const temp = new sDTW();
-    //     temp.result(math.transpose(normalizedSensorData[i]), template,35);
-    //     sDTWObj.push(temp);
-    // });
-    // console.timeEnd('sDTW Algorithm');
-    // console.log(sDTWObj[0].labelList);
-    // console.log(sDTWObj[1].labelList);
-
-    // const firstRow = sDTWObj[0].distMatrix._data[0].toString();
-
-    // await RNFetchBlob.fs.writeFile('/storage/emulated/0/Documents/Outputs/DistMatrixLeft_RunAlgo.csv',
-    //     firstRow, 'utf-8');
-    // await RNFetchBlob.fs.createFile('/storage/emulated/0/Documents/Outputs/DistMatrixLeft_RunAlgo.csv');
-
-    // sDTWObj[0].distMatrix._data.forEach((v, i) => {
-    //     RNFetchBlob.fs.appendFile('/storage/emulated/0/Documents/Outputs/DistMatrixLeft_RunAlgo.csv', v.toString(), 'utf8')
-    //         .then(() => {
-    //             console.log('Wrote the ' + i + 'th row');
-    //         })
-    // });
+    console.time('sDTW Algorithm');
+    sensorData.data.forEach((v,i) => {
+        normalizedSensorData[i] = math.matrix([math.divide(calibFilteredFinalData[i][4], 500), math.divide(calibFilteredFinalData[i][5], 500)]);
+        const temp = new sDTW();
+        temp.result(math.transpose(normalizedSensorData[i]), template,35);
+        sDTWObj.push(temp);
+    });
+    console.timeEnd('sDTW Algorithm');
 
     /*
     * Evaluating the Gait Events from the strides
@@ -140,30 +113,32 @@ export const run = async function () {
     // sDTWObj.push(hardCoded.labelListLeft());
     // sDTWObj.push(hardCoded.labelListRight());
 
-    // console.time('Gait Events Algorithm');
-    // sensorData.data.forEach((v,i) => {
-    //     const temp = new gaitEvents();
-    //     const labelListStrides = sDTWObj[i];
-    //     temp.getGaitEventResults(sensorData, labelListStrides, i);
-    //     gaitEventObj.push(temp);
-    // });
-    // console.timeEnd('Gait Events Algorithm');
-    // console.log(gaitEventObj[0].MSLabels);
+    console.time('Gait Events Algorithm');
+    sensorData.data.forEach((v,i) => {
+        const temp = new gaitEvents();
+        const labelListStrides = sDTWObj[i].labelList;
+        temp.getGaitEventResults(sensorData, labelListStrides, i);
+        gaitEventObj.push(temp);
+    });
+    console.timeEnd('Gait Events Algorithm');
+
     /*
     * Computing the 3D trajectory
     * */
-    // console.time('3D trajectory Algorithm');
-    // const spatialObj = new spatialTrajectory3D({});
-    // spatialObj.maxIntTime(sensorData, sDTWObj);
-    // spatialObj.computeTrajectory(sensorData, gaitEventObj);
-    // console.timeEnd('3D trajectory Algorithm');
+    console.time('3D trajectory Algorithm');
+    const spatialObj = new spatialTrajectory3D({});
+    spatialObj.maxIntTime(sensorData, sDTWObj);
+    spatialObj.computeTrajectory(sensorData, gaitEventObj);
+    console.timeEnd('3D trajectory Algorithm');
 
-    // console.time('Gait Events Algorithm');
-    // const gaitFeatures = new gaitEventFeatures();
-    // gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
-    // console.timeEnd('Gait Events Algorithm');
+    console.time('Gait Events Algorithm');
+    const gaitFeatures = new gaitEventFeatures();
+    gaitFeatures.getFeatures(sensorData, spatialObj, gaitEventObj);
+    console.timeEnd('Gait Events Algorithm');
 
     console.timeEnd('Overall Pipeline time = ');
+
+    console.log(gaitFeatures);
 
     return 1;
 
