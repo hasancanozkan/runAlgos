@@ -44,13 +44,12 @@ class gaitEvents {
         * */
 
         for (let i = 0; i < labelListSteps.length; ++i) {
-        // for (let i = 0; i < 2; ++i) {
             const start = labelListSteps[i][1];
             const stop = start + labelListSteps[i][2];
 
             // Compiling Signals needed for event detection
-            const gyrZSignal = sensorData.data[foot][5].slice(start - 1, stop);
-            const accXSignal = sensorData.data[foot][0].slice(start - 1, stop);
+            const gyrZSignal = sensorData.data[foot][5].slice(start, stop + 1);
+            const accXSignal = sensorData.data[foot][0].slice(start, stop + 1);
 
             // This requires sampling rate of left or right foot
             this.TOLabels[i] = computeLabels.getToeOff(gyrZSignal, start, i);

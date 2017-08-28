@@ -74,7 +74,7 @@ module.exports.getToeOff = function (gyrZSignal: Array<Array<number>>, startSamp
     }
 
     // get the first zero crossing and also look left-right from this
-    if (flipSignIdx === 1) {
+    if (flipSignIdx === 0) {
         shifts = [0, 1];
     } else {
         shifts = [-1, 0, 1];
@@ -138,6 +138,8 @@ module.exports.getHeelStrike = function (
     * r1 --> psoition of max abs value in GyroZ
     * r2 --> ceil round of GyroZ Signal/2
     * */
+    // TODO: Error for 59th label in right foot, range is calculated wrong {105, 58}
+    // TODO: i.e gyrZSignal at 59th label is probably wrong
     const range = {
         r1: gyrZSignal.indexOf(math.max(gyrZSignal)),
         r2: math.ceil(0.5 * gyrZSignal.length)
@@ -207,13 +209,13 @@ module.exports.getMidStance = function (
     /*
      Get energy in each window
      */
-    let energyGyr = [];
+    const energyGyr = [];
 
     // Slicing the Gyro data from start to stop Sample
     gyrSignal.forEach(val => energyGyr.push(val.slice(startSampleStep, stopSampleStep + 1)));
 
-    energyGyr = getEnergy(energyGyr);
-    const energyGyr2 = math.abs(filter.getFilteredData(5, energyGyr));
+    const energyGyr1 = getEnergy(energyGyr);
+    const energyGyr2 = math.abs(filter.getFilteredData(5, energyGyr1));
     const energyPerWindowBufferGyr = bufferEnergySignal(energyGyr2, windowSize, overlap);
 
     const windowLength = energyPerWindowBufferGyr.length;
@@ -261,7 +263,7 @@ module.exports.getMidStance = function (
  * @param {Array.<Array.<number>>} signal is an N cross 3 digital signal
  * @returns {Array.<number>} The squared sum of N cross 3 digital signal
  */
-function getEnergy (signal: Array<Array<number>>): Array<number> {
+function getEnergy (signal: Array<Array<number>>) {
     const energySignal = new Array(signal[0].length);
 
     for (let i = 0; i < energySignal.length; i++) {
@@ -272,12 +274,12 @@ function getEnergy (signal: Array<Array<number>>): Array<number> {
 }
 
 /**
-*  Buffer signal vector into matrix of data frames
-*  @param {Array<number>} energyGyr The energy of the digital signal
-*  @param {number} windowSize Length of each of the non-overlapping data segments (frames)
-*  @param {number} overlap Number of samples in each frame
-*  @returns {Array<Array<number>>} buffer
-*/
+ *  Buffer signal vector into matrix of data frames
+ *  @param {Array<number>} energyGyr The energy of the digital signal
+ *  @param {number} windowSize Length of each of the non-overlapping data segments (frames)
+ *  @param {number} overlap Number of samples in each frame
+ *  @returns {Array<Array<number>>} buffer
+ */
 function bufferEnergySignal (
     energyGyr: Array<number>,
     windowSize: number,

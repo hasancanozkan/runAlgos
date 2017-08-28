@@ -31,7 +31,6 @@ module.exports.changeAxis = function (array: Array<Array<number>>) {
  * @returns {Array<Array<number>>}
  */
 module.exports.invertAxis = function (array: Array<Array<number>>) {
-
     array[0] = array[0].map(element => element * (-1));
     array[2] = array[2].map(element => element * (-1));
     array[3] = array[3].map(element => element * (-1));
@@ -46,7 +45,6 @@ module.exports.invertAxis = function (array: Array<Array<number>>) {
  * @returns {Array.<Array.<number>>}
  */
 module.exports.invertAxisRightOnly = function (array: Array<Array<number>>) {
-
     array[2] = array[2].map(element => element * (-1));
     array[3] = array[3].map(element => element * (-1));
     array[4] = array[4].map(element => element * (-1));
@@ -58,8 +56,7 @@ export async function csv2Mat (fileName: string, tag: string) {
 
     if (tag === 'acc') {
         let str = await RNFetchBlob.fs.readFile(fileName, 'utf8');
-        str = str.split(/[, \r\n]+/);
-        // console.log(str);
+        str = str.split(/[, \r\n]+/).map(Number);
         return {
             bias: math.matrix([ str[0], str[7], str[14] ]),
             rotation: math.matrix([str[1], str[2], str[3], str[8], str[9], str[10], str[15], str[16], str[17]]).reshape([3,3]),
@@ -67,7 +64,7 @@ export async function csv2Mat (fileName: string, tag: string) {
         };
     } else {
         let str = await RNFetchBlob.fs.readFile(fileName, 'utf8');
-        str = str.split(/[, \r\n]+/);
+        str = str.split(/[, \r\n]+/).map(Number);
         return {
             bias: math.matrix([ str[0], str[7], str[14] ]),
             rotation: math.matrix([str[1], str[2], str[3], str[8], str[9], str[10], str[15], str[16], str[17]]).reshape([3,3]),
@@ -75,35 +72,6 @@ export async function csv2Mat (fileName: string, tag: string) {
         };
     }
 }
-
-/**
- * This function reads the calibration file(.csv) and converts to an object with bias, rotation and scaling parameters
- * @param fileName
- * @param tag
- * @returns {{bias: *, rotation: (Matrix|Array|*), scaling: (Matrix|Array|*)}}
- *//*
-module.exports.csv2Mat = function (fileName: string, tag: string) {
-
-    if (tag === 'acc') {
-        // eslint-disable-next-line no-sync
-        //const str = fs.readFileSync(fileName).toString().split(/[, \r\n]+/);
-        //const str = RNFetchBlob.fs.readStream(fileName).toString().split(/[, \r\n]+/);
-        return {
-            bias: math.matrix([ str[0], str[7], str[14] ]),
-            rotation: math.matrix([str[1], str[2], str[3], str[8], str[9], str[10], str[15], str[16], str[17]]).reshape([3,3]),
-            scaling: math.matrix([str[4], str[5], str[6], str[11], str[12], str[13], str[18], str[19], str[20]]).reshape([3,3])
-        };
-    } else {
-        // eslint-disable-next-line no-sync
-        const str = fs.readFileSync(fileName).toString().split(/[, \r\n]+/);
-        return {
-            bias: math.matrix([ str[0], str[7], str[14] ]),
-            rotation: math.matrix([str[1], str[2], str[3], str[8], str[9], str[10], str[15], str[16], str[17]]).reshape([3,3]),
-            scaling: math.matrix([str[4], str[5], str[6], str[11], str[12], str[13], str[18], str[19], str[20]]).reshape([3,3])
-        };
-    }
-};*/
-
 /**
  * This function calibrates the raw sensor data
  * @param {Array.<Array.<number>>} array
