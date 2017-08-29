@@ -54,15 +54,6 @@ export default class runAlgos extends Component {
                     <ScrollView contentContainerStyle={{flexGrow: 1, alignItems : 'center'}}>
                         <Text style={{fontSize: 20, color: 'black'}}> {this.showValues(this.state.strideLengthLeft)} </Text>
                     </ScrollView>
-                <Text style={styles.welcome}>
-                    Welcome to React Native!
-                </Text>
-                <Button
-                    color='yellowgreen'
-                    title="Run Demopipeline"
-                    onPress={async () => this._try()}
-                />
-
                     <ScrollView contentContainerStyle={{flexGrow: 1, alignItems : 'center'}}>
                         <Text style={{fontSize: 20, color: 'black'}}> {this.showValues(this.state.strideLengthRight)} </Text>
                     </ScrollView>
