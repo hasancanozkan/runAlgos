@@ -45,13 +45,13 @@ export async function run ()  {
     const calibrationFiles = [
         {
             foot: 'LeftFoot',
-            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv','acc'),
-            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv','gyro')
+            Acc: await calibrate.getCalibrationData('/storage/emulated/0/Documents/data/dataset/B4F4_acc_left.csv'),
+            Gyr: await calibrate.getCalibrationData('/storage/emulated/0/Documents/data/dataset/B4F4_gyro_left.csv')
         },
         {
             foot: 'RightFoot',
-            Acc: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv','acc'),
-            Gyr: await calibrate.csv2Mat('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv','gyro')
+            Acc: await calibrate.getCalibrationData('/storage/emulated/0/Documents/data/dataset/B4F0_acc_right.csv'),
+            Gyr: await calibrate.getCalibrationData('/storage/emulated/0/Documents/data/dataset/B4F0_gyro_right.csv')
         }
     ];
 
@@ -139,12 +139,5 @@ export async function run ()  {
 
     console.timeEnd('Overall Pipeline time = ');
 
-<<<<<<< HEAD
     return gaitFeatures.strideLength;
 }
-
-// run();
-=======
-    return gaitFeatures.heelStrikeAngle;
-};
->>>>>>> f16eba2b75dda6eb0a77accbf925ebf4af63fb9a
